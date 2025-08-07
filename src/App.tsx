@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp, FaGithub, FaWordpress } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { FaWordpressSimple, FaShopify, FaRocket, FaHtml5, FaCss3Alt, FaJs } from 'react-icons/fa';
-import { SiPhp, SiN8N, SiJquery, SiBootstrap, SiMysql, SiLaravel, SiGraphql } from 'react-icons/si';
+import { SiPhp, SiN8N, SiJquery, SiMysql, SiGraphql } from 'react-icons/si';
 
 const sectionTitle = (title: string) => (
   <motion.div
@@ -154,7 +154,6 @@ function App() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [sliderImages, setSliderImages] = useState<string[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -178,16 +177,7 @@ function App() {
     setSliderImages(images);
   }, []);
 
-  // Auto-advance slider
-  useEffect(() => {
-    if (sliderImages.length > 0) {
-      const timer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % sliderImages.length);
-      }, 4000); // Change slide every 4 seconds
 
-      return () => clearInterval(timer);
-    }
-  }, [sliderImages.length]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
