@@ -1,8 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp, FaGithub, FaWordpress } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaWordpressSimple, FaShopify, FaRocket, FaHtml5, FaCss3Alt, FaJs } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
+// Declare Calendly global object
+declare global {
+  interface Window {
+    Calendly: {
+      initInlineWidget: (options: {
+        url: string;
+        parentElement: HTMLElement;
+        prefill: any;
+        utm: any;
+        pageSettings?: {
+          backgroundColor: string;
+          hideEventTypeDetails: boolean;
+          hideLandingPageDetails: boolean;
+          primaryColor: string;
+          textColor: string;
+        };
+      }) => void;
+    };
+  }
+}
+import { FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaGithub, FaWordpress, FaWordpressSimple, FaShopify, FaRocket, FaHtml5, FaCss3Alt, FaJs, FaCheck } from 'react-icons/fa';
 import { SiPhp, SiN8N, SiJquery, SiMysql, SiGraphql } from 'react-icons/si';
+import BlogCard from './components/BlogCard';
+import { getLatestBlogPosts } from './services/blogService';
 
 const sectionTitle = (title: string) => (
   <motion.div
@@ -14,7 +37,7 @@ const sectionTitle = (title: string) => (
   >
     {/* Background Text */}
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <span className="text-8xl md:text-8xl font-black text-[#333] opacity-40 uppercase tracking-wider">
+      <span className="text-6xl md:text-7xl lg:text-8xl font-black text-[#333] opacity-30 uppercase tracking-wider">
         {title}
       </span>
     </div>
@@ -143,6 +166,8 @@ function FloatingIcon({ icon, name, position, delay, top, gradient }: {
 }
 
 function App() {
+  const [scrollY, setScrollY] = useState(0);
+  
   // Add your photo (replace with your actual image path)
   const profileImg = '/profile.png'; // Place your image in public/profile.jpg
   
@@ -157,6 +182,12 @@ function App() {
   const [sliderImages, setSliderImages] = useState<string[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [calendlyLoaded, setCalendlyLoaded] = useState(false);
+  const [latestBlogs, setLatestBlogs] = useState<any[]>([]);
+  const [blogsLoading, setBlogsLoading] = useState(true);
+  
+  // Calendly widget ref
+  const calendlyRef = useRef<HTMLDivElement>(null);
 
   // Load slider images from public/slider folder
   useEffect(() => {
@@ -177,7 +208,84 @@ function App() {
     setSliderImages(images);
   }, []);
 
+  // Handle scroll events for floating action buttons
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Load latest blog posts
+  useEffect(() => {
+    const loadLatestBlogs = async () => {
+      try {
+        const blogs = await getLatestBlogPosts(3);
+        setLatestBlogs(blogs);
+      } catch (error) {
+        console.error('Error loading latest blogs:', error);
+      } finally {
+        setBlogsLoading(false);
+      }
+    };
+
+    loadLatestBlogs();
+  }, []);
+
+
+  // Initialize Calendly widget
+  useEffect(() => {
+    let isInitialized = false;
+    
+    const initCalendly = () => {
+      if (window.Calendly && calendlyRef.current && !isInitialized) {
+        try {
+          // Clear any existing content first
+          if (calendlyRef.current) {
+            calendlyRef.current.innerHTML = '';
+          }
+          
+          window.Calendly.initInlineWidget({
+            url: 'https://calendly.com/priyanka-gusani',
+            parentElement: calendlyRef.current,
+            prefill: {},
+            utm: {}
+          });
+          isInitialized = true;
+          setCalendlyLoaded(true);
+        } catch (error) {
+          console.error('Error initializing Calendly:', error);
+        }
+      }
+    };
+
+    // Wait for Calendly to load
+    const checkCalendly = setInterval(() => {
+      if (window.Calendly && !isInitialized) {
+        clearInterval(checkCalendly);
+        initCalendly();
+      }
+    }, 100);
+
+    // Cleanup interval after 15 seconds
+    setTimeout(() => {
+      clearInterval(checkCalendly);
+      if (!calendlyLoaded && !isInitialized) {
+        console.warn('Calendly failed to load within 15 seconds');
+      }
+    }, 15000);
+
+    return () => {
+      clearInterval(checkCalendly);
+      isInitialized = false;
+      // Clean up Calendly widget
+      if (calendlyRef.current) {
+        calendlyRef.current.innerHTML = '';
+      }
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -224,106 +332,171 @@ function App() {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="bg-[#0f0f0f] text-[#f5f5f5] min-h-screen font-sans">
       {/* Hero Section */}
       <section id="hero" className="h-screen flex flex-col justify-center items-center text-center pb-4 md:pb-2 relative overflow-hidden">
         {/* Floating Icons - Left Side */}
         <FloatingIcon 
-          icon={<SiPhp size={28} />} 
+          icon={<SiPhp size={20} className="md:w-7 md:h-7" />} 
           name="PHP" 
           position="left" 
           delay={0} 
-          top="top-12" 
+          top="top-8 md:top-12" 
           gradient="linear-gradient(135deg, #8993be 0%, #4F5B93 100%)"
         />
         <FloatingIcon 
-          icon={<FaHtml5 size={28} />} 
+          icon={<FaHtml5 size={20} className="md:w-7 md:h-7" />} 
           name="HTML5" 
           position="left" 
           delay={1.2} 
-          top="top-32" 
+          top="top-24 md:top-32" 
           gradient="linear-gradient(135deg, #e34f26 0%, #f06529 100%)"
         />
         <FloatingIcon 
-          icon={<FaCss3Alt size={28} />} 
+          icon={<FaCss3Alt size={20} className="md:w-7 md:h-7" />} 
           name="CSS3" 
           position="left" 
           delay={2.4} 
-          top="top-56" 
+          top="top-44 md:top-56" 
           gradient="linear-gradient(135deg, #1572b6 0%, #33a9dc 100%)"
         />
         <FloatingIcon 
-          icon={<SiJquery size={28} />} 
+          icon={<SiJquery size={20} className="md:w-7 md:h-7" />} 
           name="jQuery" 
           position="left" 
           delay={3.6} 
-          top="top-80" 
+          top="top-64 md:top-80" 
           gradient="linear-gradient(135deg, #0769ad 0%, #7acef4 100%)"
         />
         <FloatingIcon 
-          icon={<SiMysql size={28} />} 
+          icon={<SiMysql size={20} className="md:w-7 md:h-7" />} 
           name="MySQL" 
           position="left" 
           delay={4.8} 
-          top="bottom-12" 
+          top="bottom-16 md:bottom-12" 
           gradient="linear-gradient(135deg, #00758f 0%, #f29111 100%)"
         />
         
         {/* Floating Icons - Right Side */}
         <FloatingIcon 
-          icon={<FaWordpressSimple size={28} />} 
+          icon={<FaWordpressSimple size={20} className="md:w-7 md:h-7" />} 
           name="WordPress" 
           position="right" 
           delay={0.6} 
-          top="top-8" 
+          top="top-6 md:top-8" 
           gradient="linear-gradient(135deg, #21759b 0%, #00749C 100%)"
         />
         <FloatingIcon 
-          icon={<FaShopify size={28} />} 
+          icon={<FaShopify size={20} className="md:w-7 md:h-7" />} 
           name="Shopify" 
           position="right" 
           delay={1.8} 
-          top="top-32" 
+          top="top-24 md:top-32" 
           gradient="linear-gradient(135deg, #96bf48 0%, #5e8e3e 100%)"
         />
         <FloatingIcon 
-          icon={<SiN8N size={28} />} 
+          icon={<SiN8N size={20} className="md:w-7 md:h-7" />} 
           name="n8n" 
           position="right" 
           delay={3.0} 
-          top="top-56" 
+          top="top-44 md:top-56" 
           gradient="linear-gradient(135deg, #F36C21 0%, #F89C4B 100%)"
         />
         <FloatingIcon 
-          icon={<FaJs size={28} />} 
+          icon={<FaJs size={20} className="md:w-7 md:h-7" />} 
           name="JavaScript" 
           position="right" 
           delay={4.2} 
-          top="top-80" 
+          top="top-64 md:top-80" 
           gradient="linear-gradient(135deg, #f7df1e 0%, #f0db4f 100%)"
         />
         <FloatingIcon 
-          icon={<SiGraphql size={28} />} 
+          icon={<SiGraphql size={20} className="md:w-7 md:h-7" />} 
           name="GraphQL" 
           position="right" 
           delay={2.4} 
-          top="bottom-11" 
+          top="bottom-16 md:bottom-11" 
           gradient="linear-gradient(135deg, #e535ab 0%, #f6009b 100%)"
         />
         
-        <div className="flex flex-col md:flex-row items-center justify-center gap-12 relative z-10 max-w-6xl mx-auto px-4">
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col items-center justify-center gap-6 relative z-20 max-w-5xl mx-auto px-4">
+          {/* Profile Image - Mobile */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="flex-shrink-0 relative flex items-end"
+          >
+            <img src={profileImg} alt="Priyanka Gusani" className="w-48 h-56 object-cover shadow-2xl relative z-20" />
+            {/* Animated Line Below Image - Mobile */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 h-px z-20"
+              animate={{
+                background: [
+                  'linear-gradient(90deg, #cc5500 0%, #ff6600 50%, #e535ab 100%)',
+                  'linear-gradient(90deg, #e535ab 0%, #cc5500 50%, #ff6600 100%)',
+                  'linear-gradient(90deg, #ff6600 0%, #e535ab 50%, #cc5500 100%)',
+                  'linear-gradient(90deg, #cc5500 0%, #ff6600 50%, #e535ab 100%)'
+                ]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          </motion.div>
+          
+          {/* Content - Mobile */}
+          <div className="text-center max-w-xl relative z-20">
+            <motion.h1
+              className="text-2xl font-extrabold text-[#cc5500] mb-3"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <div>Priyanka</div>
+              <div>Gusani</div>
+            </motion.h1>
+            <motion.h2
+              className="text-base font-bold mb-3 text-[#f5f5f5]"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9 }}
+            >
+              <div>Sr. WordPress Developer &</div>
+              <div>Automation Specialist</div>
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.3 }}
+            >
+              <a
+                href="#contact"
+                className="inline-block px-5 py-2.5 bg-[#cc5500] text-[#f5f5f5] font-bold rounded-lg shadow-lg hover:scale-105 hover:bg-[#ff6600] transition-all duration-300 text-sm"
+              >
+                Hire Me
+              </a>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex flex-row items-center justify-center gap-12 relative z-10 max-w-6xl mx-auto px-4">
           {/* Profile Image - Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
-            className="flex-shrink-0 relative h-full flex items-end"
+            className="flex-shrink-0 relative flex items-end"
           >
             {/* Animated SVG Background */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-80 z-0">
-              <svg className="w-full h-full max-w-md max-h-md" viewBox="0 0 602 602" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="absolute inset-0 flex items-center justify-center opacity-60 z-0">
+              <svg className="w-full h-full max-w-lg max-h-lg" viewBox="0 0 602 602" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g opacity="0.6">
                   <path fillRule="evenodd" clipRule="evenodd" d="M201.337 87.437C193.474 79.5738 180.725 79.5738 172.862 87.437L87.437 172.862C79.5739 180.725 79.5739 193.474 87.437 201.337L400.663 514.563C408.526 522.426 421.275 522.426 429.138 514.563L514.563 429.138C522.426 421.275 522.426 408.526 514.563 400.663L201.337 87.437ZM30.4869 115.912C-8.82897 155.228 -8.82897 218.972 30.4869 258.287L343.713 571.513C383.028 610.829 446.772 610.829 486.088 571.513L571.513 486.088C610.829 446.772 610.829 383.028 571.513 343.713L258.287 30.4869C218.972 -8.82896 155.228 -8.82896 115.912 30.4869L30.4869 115.912Z" stroke="url(#paint0_radial)" id="path_0"></path>
                   <path d="M514.563 201.337C522.426 193.474 522.426 180.725 514.563 172.862L429.138 87.437C421.275 79.5738 408.526 79.5739 400.663 87.437L358.098 130.002L301.148 73.0516L343.713 30.4869C383.028 -8.82896 446.772 -8.82896 486.088 30.4869L571.513 115.912C610.829 155.228 610.829 218.972 571.513 258.287L357.802 471.999L300.852 415.049L514.563 201.337Z" stroke="url(#paint1_radial)" id="path_1"></path>
@@ -439,7 +612,7 @@ function App() {
                 </defs>
               </svg>
             </div>
-            <img src={profileImg} alt="Priyanka Gusani" className="w-68 h-74 md:w-83 md:h-[76vh] object-cover shadow-2xl relative z-10" />
+            <img src={profileImg} alt="Priyanka Gusani" className="w-83 h-[76vh] object-cover shadow-2xl relative z-10" />
             {/* Animated Line Below Image */}
             <motion.div
               className="absolute bottom-0 left-0 right-0 h-0.5 z-20"
@@ -459,10 +632,10 @@ function App() {
             />
           </motion.div>
           
-          {/* Content - Right Side */}
+          {/* Content - Desktop */}
           <div className="text-right max-w-2xl">
             <motion.h1
-              className="text-4xl md:text-6xl font-extrabold text-[#cc5500] mb-4"
+              className="text-6xl font-extrabold text-[#cc5500] mb-4"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
@@ -471,7 +644,7 @@ function App() {
               <div>Gusani</div>
             </motion.h1>
             <motion.h2
-              className="text-xl md:text-2xl font-bold mb-4 text-[#f5f5f5]"
+              className="text-2xl font-bold mb-4 text-[#f5f5f5]"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9 }}
@@ -480,12 +653,12 @@ function App() {
               <div>Automation Specialist</div>
             </motion.h2>
             <motion.p
-              className="text-base md:text-lg mb-8 text-[#f5f5f5]"
+              className="text-lg mb-8 text-[#f5f5f5]"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1 }}
             >
-              Building powerful WordPress solutions for the modern web
+              I help businesses grow digitally with websites, automation, <br />and smart strategies.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -503,24 +676,114 @@ function App() {
         </div>
       </section>
       {/* Rocket Separator */}
-      <div className="flex flex-col items-center -mt-8 mb-2">
+      <div className="flex flex-col items-center -mt-4 mb-2 relative z-10">
         <div className="flex items-center justify-center">
           <span className="inline-block p-3 rounded-full border-2 border-dotted border-[#cc5500] bg-[#181818] text-[#cc5500] text-3xl shadow-md"><FaRocket /></span>
         </div>
         <div className="w-1 h-8 border-l-2 border-dotted border-[#cc5500] mx-auto" />
       </div>
       {/* About Section */}
-      <section id="about" className="py-5 px-4 md:px-24 text-center">
+      <section id="about" className="py-16 px-4 md:px-24">
         {sectionTitle('About Me')}
-        <motion.p
-          className="text-lg md:text-xl max-w-3xl mx-auto"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-        >
-          Enthusiast Engineer with 7+ years of industrial experience in Web development and Technical support. I am result-oriented, self-driven, and disciplined with strong fundamentals in web development. I believe in the power of consistent improvement and am always eager to learn something new every day.
-        </motion.p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-12">
+          {/* Left Side - Content */}
+          <motion.div
+            className="text-left"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+          >
+            <motion.p
+              className="text-lg md:text-xl leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              Hi! I’m Priyanka, I help businesses establish and grow their digital presence by offering website development, automation solutions, and strategic consultation. From building responsive and user-friendly websites to implementing automation tools that streamline operations, I work with businesses to digitize their processes and scale efficiently. 
+              <br /><br />My goal is to support organizations in leveraging technology to enhance productivity, reach, and growth.
+            </motion.p>
+            
+            <motion.div
+              className="mt-8 space-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-[#cc5500] rounded-full"></div>
+                <span className="text-[#f5f5f5]">Complete Web Development — From Design to Deployment</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-[#cc5500] rounded-full"></div>
+                <span className="text-[#f5f5f5]">Proactive Technical Support & Troubleshooting You Can Trust</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-[#cc5500] rounded-full"></div>
+                <span className="text-[#f5f5f5]">Tailored WordPress & Shopify Solutions for Seamless E-Commerce</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-3 h-3 bg-[#cc5500] rounded-full"></div>
+                <span className="text-[#f5f5f5]">Automation & Integration Strategies That Save Time and Cut Costs</span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Side - Video */}
+          <motion.div
+            className="flex justify-center lg:justify-end"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+          >
+            <div className="relative w-full max-w-lg">
+              <motion.div
+                className="relative p-[3px] rounded-2xl overflow-hidden"
+                animate={{
+                  background: [
+                    'linear-gradient(135deg, #cc5500 0%, #ff6600 50%, #e535ab 100%)',
+                    'linear-gradient(135deg, #e535ab 0%, #cc5500 50%, #ff6600 100%)',
+                    'linear-gradient(135deg, #ff6600 0%, #e535ab 50%, #cc5500 100%)',
+                    'linear-gradient(135deg, #cc5500 0%, #ff6600 50%, #e535ab 100%)'
+                  ]
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              >
+                <div className="bg-gradient-to-br from-[#181818] to-[#232323] rounded-2xl p-2 relative z-10">
+                  <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-xl"
+                      src="https://www.youtube.com/embed/zezc4FSFEkY?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&showinfo=0&loop=1&playlist=zezc4FSFEkY"
+                      title="Introduction Video"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Video Info */}
+              <motion.div
+                className="mt-4 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <p className="text-sm text-[#cc5500] font-medium">Introduction Video</p>
+                <p className="text-xs text-[#888] mt-1">Get to know me better</p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
       </section>
       {/* Skills Section */}
       <section id="skills" className="py-12 px-4 md:px-24">
@@ -537,9 +800,12 @@ function App() {
               whileHover={{ scale: 1.05, boxShadow: '0 8px 32px 0 #cc550099' }}
             >
               <h3 className="text-2xl font-bold mb-2 text-[#cc5500] text-center">{skill.title}</h3>
-              <ul className="list-disc list-inside space-y-1">
+              <ul className="space-y-2">
                 {skill.items.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i} className="flex items-start gap-3">
+                    <FaCheck className="text-[#cc5500] mt-1 flex-shrink-0" size={14} />
+                    <span className="text-[#f5f5f5]">{item}</span>
+                  </li>
                 ))}
               </ul>
             </motion.div>
@@ -765,7 +1031,7 @@ function App() {
               className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-75 transition-all duration-300"
             >
               →
-            </button>
+        </button>
             
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-full text-sm">
@@ -774,35 +1040,179 @@ function App() {
           </div>
         </motion.div>
       )}
+
+      {/* Client Reviews Section */}
+      <section id="reviews" className="py-16 px-4 md:px-24 bg-[#0f0f0f]">
+        {sectionTitle('Client Reviews')}
+        
+        <motion.div
+          className="max-w-4xl mx-auto mt-12"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="relative">
+            {/* Single Review Card */}
+            <motion.div
+              className="bg-gradient-to-br from-[#181818] to-[#232323] rounded-2xl p-5 shadow-xl border border-[#232323] relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              {/* Gradient Border Animation - thin border */}
+              <div className="absolute inset-0 rounded-2xl p-[1px]">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-r from-[#cc5500] via-[#ff6600] to-[#e535ab] animate-pulse"></div>
+              </div>
+              
+              {/* Review Content */}
+              <div className="relative bg-gradient-to-br from-[#181818] to-[#232323] rounded-2xl p-6">
+                {/* Stars */}
+                <div className="flex justify-center mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <motion.svg
+                      key={i}
+                      className="w-6 h-6 text-[#ffd700] mx-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 + i * 0.1 }}
+                      viewport={{ once: true }}
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </motion.svg>
+                  ))}
+                </div>
+
+                {/* Review Text */}
+                <motion.blockquote
+                  className="text-lg md:text-xl text-[#f5f5f5] text-center italic leading-relaxed mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                >
+                  "Priyanka made awesome wordpress giftcard support and handled complex issues. Highly recommended! "
+                  <a href='https://wp-giftcard.com/' target='_blank' rel='noopener noreferrer' className='text-[#cc5500] hover:underline ml-2'>WP Gift Card</a>
+                </motion.blockquote>
+
+                {/* Client Info */}
+                <motion.div
+                  className="text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#cc5500] to-[#ff6600] rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <span className="text-white font-bold text-xl">PF</span>
+                  </div>
+                  <h4 className="text-[#cc5500] font-semibold text-lg">Patrick Fuchshofer</h4>
+                  <p className="text-[#888] text-sm">CEO, Codemenschen</p>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Slider Navigation (for future use) */}
+            <div className="flex justify-center mt-8 space-x-2">
+              <motion.button
+                className="w-3 h-3 bg-[#cc5500] rounded-full"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+              />
+              <motion.button
+                className="w-3 h-3 bg-[#333] rounded-full"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+              />
+              <motion.button
+                className="w-3 h-3 bg-[#333] rounded-full"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+              />
+            </div>
+          </div>
+        </motion.div>
+      </section>
       
-      {/* Education Section */}
-      <section id="education" className="py-10 px-4 md:px-24">
-        {sectionTitle('Education')}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Book Appointment Section */}
+      <section id="book-appointment" className="py-20 px-4 md:px-24 relative overflow-hidden z-20">
+        {sectionTitle("Book Appointment")}
+        
+        <motion.div
+          className="container mx-auto px-4 md:px-24"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          {!calendlyLoaded && (
+            <div className="flex items-center justify-center h-[700px] bg-[#181818] rounded-lg border border-[#333]">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cc5500] mx-auto mb-4"></div>
+                <p className="text-[#f5f5f5]">Loading booking calendar...</p>
+                <p className="text-[#888] text-sm mt-2">If this takes too long, please refresh the page</p>
+              </div>
+            </div>
+          )}
+          <div 
+            ref={calendlyRef}
+            key="calendly-widget"
+            className="w-full relative z-30 rounded-lg"
+            style={{
+              minWidth: '320px', 
+              width: '100%', 
+              height: '700px', 
+              display: calendlyLoaded ? 'block' : 'none'
+            }}
+          />
+        </motion.div>
+        
+        {/* Clear separation div */}
+        <div className="h-20 bg-[#0f0f0f] relative z-40"></div>
+      </section>
+      {/* Blog Section */}
+      <section id="blog" className="py-0 bg-[#0f0f0f] relative z-10">
+        <div className="container mx-auto px-4">
+          {/* Blog Section Title - Centered */}
+          {sectionTitle("Latest Blog Posts")}
+          
+          
+                         {blogsLoading ? (
+                 <div className="text-center py-12">
+                   <div className="text-4xl mb-4">⏳</div>
+                   <p className="text-[#ccc]">Loading latest blog posts...</p>
+                 </div>
+               ) : (
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-12">
+                   {latestBlogs.map((post) => (
+                     <BlogCard
+                       key={post.id}
+                       post={post}
+                     />
+                   ))}
+                 </div>
+               )}
+          
           <motion.div
-            className="bg-gradient-to-br from-[#181818] to-[#232323] rounded-xl p-6 shadow-lg"
-            initial={{ opacity: 0, y: 40 }}
+            className="text-center"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-xl font-bold text-[#cc5500] mb-2">B.E. in Computer Engineering</h3>
-            <p className="mb-1">Gujarat Technological University</p>
-            <p className="text-sm">2017 – 2020 | 7.7 CGPA</p>
-          </motion.div>
-          <motion.div
-            className="bg-gradient-to-br from-[#181818] to-[#232323] rounded-xl p-6 shadow-lg"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-xl font-bold text-[#cc5500] mb-2">Diploma in Computer Engineering</h3>
-            <p className="mb-1">Gujarat Technological University</p>
-            <p className="text-sm">2014 – 2017 | 8.37 CGPA</p>
+            <Link
+              to="/blog"
+              className="inline-block px-8 py-4 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white font-semibold rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+            >
+              View All Posts
+            </Link>
           </motion.div>
         </div>
       </section>
+
       {/* Contact Section */}
       <section id="contact" className="py-12 bg-[#0f0f0f]">
         {sectionTitle("Contact")}
@@ -910,15 +1320,6 @@ function App() {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-[#1a1a1a] rounded-full flex items-center justify-center flex-shrink-0">
-                    <FaPhone className="text-[#cc5500] text-xl" />
-                  </div>
-                  <div>
-                    <h4 className="text-[#f5f5f5] font-bold mb-2">Phone</h4>
-                    <p className="text-[#999]">+91 87583 96841</p>
-                  </div>
-                </div>
 
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#1a1a1a] rounded-full flex items-center justify-center flex-shrink-0">
@@ -944,15 +1345,6 @@ function App() {
                     <FaLinkedin className="text-lg" />
                   </motion.a>
                   <motion.a
-                    href="https://wa.me/918758396841"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-full flex items-center justify-center text-[#f5f5f5] hover:border-[#cc5500] hover:text-[#cc5500] transition-all duration-300"
-                  >
-                    <FaWhatsapp className="text-lg" />
-                  </motion.a>
-                  <motion.a
                     href="https://github.com/PriyankaGusani"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -976,8 +1368,27 @@ function App() {
           </div>
         </div>
       </section>
-    </div>
+
+      {/* Floating Action Buttons */}
+      {/* Scroll to Top Button */}
+      <motion.button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-8 right-8 z-40 w-14 h-14 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: scrollY > 100 ? 1 : 0, y: scrollY > 100 ? 0 : 20 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ y: -2 }}
+        style={{ pointerEvents: scrollY > 100 ? 'auto' : 'none' }}
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </motion.button>
+
+      </div>
   );
 }
 
 export default App;
+
+

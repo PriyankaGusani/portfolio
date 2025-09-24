@@ -1,0 +1,14 @@
+{
+  "id": "1",
+  "title": "Advanced PHP Development: From Basics to Enterprise",
+  "excerpt": "Master PHP development from fundamentals to enterprise-level applications with modern frameworks, security practices, and performance optimization.",
+  "content": "PHP remains one of the most popular server-side programming languages, powering over 75% of all websites. Whether you're building a simple blog or a complex enterprise application, PHP provides the tools and flexibility you need.\n\n## Core PHP Fundamentals\n\n- **Variables and Data Types**\n- **Control Structures and Loops**\n- **Functions and Classes**\n- **Error Handling and Debugging**\n- **File Operations and I/O**\n\n## Object-Oriented Programming\n\nModern PHP development relies heavily on OOP principles:\n- **Classes and Objects**\n- **Inheritance and Polymorphism**\n- **Interfaces and Abstract Classes**\n- **Namespaces and Autoloading**\n- **Design Patterns**\n\n## Database Integration\n\n- **PDO and MySQLi**\n- **Database Design and Normalization**\n- **Query Optimization**\n- **Prepared Statements**\n- **ORM and Query Builders**\n\n## Security Best Practices\n\n- **Input Validation and Sanitization**\n- **SQL Injection Prevention**\n- **XSS Protection**\n- **CSRF Tokens**\n- **Password Hashing**\n- **Session Management**\n\n## Modern PHP Frameworks\n\n- **Laravel: The PHP Framework for Web Artisans**\n- **Symfony: Enterprise-Ready Components**\n- **CodeIgniter: Lightweight and Fast**\n- **CakePHP: Rapid Development**\n\n## Performance Optimization\n\n- **Caching Strategies**\n- **Database Query Optimization**\n- **Memory Management**\n- **Code Profiling**\n- **Server Configuration**\n\n## Conclusion\n\nPHP continues to evolve with each new version, offering better performance, security, and developer experience. By mastering these concepts and staying updated with modern practices, you can build robust, scalable applications that meet enterprise requirements.",
+  "author": "Priyanka Gusani",
+  "date": "2025-07-25",
+  "readTime": "8 min read",
+  "category": "Backend Development",
+  "tags": ["php", "backend", "programming", "web-development"],
+  "featuredImage": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop",
+  "slug": "advanced-php-development-enterprise",
+  "metaDescription": "Learn advanced PHP development techniques for building enterprise-level applications with modern frameworks and security best practices."
+}

@@ -1,0 +1,14 @@
+{
+  "id": "3",
+  "title": "Mastering CSS Grid and Flexbox for Modern Layouts",
+  "excerpt": "Learn how to create responsive, flexible layouts using CSS Grid and Flexbox for modern web applications.",
+  "content": "CSS Grid and Flexbox have revolutionized how we create layouts on the web. These powerful layout systems provide unprecedented control over how elements are positioned and sized.\n\n## Understanding Flexbox\n\nFlexbox is designed for one-dimensional layouts (either rows or columns):\n- **Flex containers and items**\n- **Main axis and cross axis**\n- **Flex properties and alignment**\n- **Responsive behavior**\n- **Common use cases**\n\n## Mastering CSS Grid\n\nCSS Grid is perfect for two-dimensional layouts:\n- **Grid containers and items**\n- **Grid lines and areas**\n- **Template areas**\n- **Responsive grid systems**\n- **Complex layouts**\n\n## Combining Both Systems\n\nLearn when and how to use both layout systems together:\n- **Grid for overall layout**\n- **Flexbox for component alignment**\n- **Responsive design patterns**\n- **Performance considerations**\n- **Browser support strategies**\n\n## Real-World Examples\n\nSee these concepts in action:\n- **Navigation menus**\n- **Card layouts**\n- **Form layouts**\n- **Dashboard designs**\n- **Mobile-first approaches**\n\n## Conclusion\n\nCSS Grid and Flexbox give you the tools to create any layout you can imagine. Understanding when and how to use each system will make you a more effective frontend developer.",
+  "author": "Priyanka Gusani",
+  "date": "2025-08-04",
+  "readTime": "5 min read",
+  "category": "Frontend Development",
+  "tags": ["css", "grid", "flexbox", "layout", "responsive"],
+  "featuredImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
+  "slug": "css-grid-flexbox-layouts",
+  "metaDescription": "Master CSS Grid and Flexbox for creating modern, responsive layouts. Learn when to use each system and how to combine them effectively."
+}
