@@ -27,6 +27,23 @@ import { SiPhp, SiN8N, SiJquery, SiMysql, SiGraphql } from 'react-icons/si';
 import BlogCard from './components/BlogCard';
 import { getLatestBlogPosts } from './services/blogService';
 
+// Google Analytics tracking functions
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
+const trackEvent = (action: string, category: string, label?: string, value?: number) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value,
+    });
+  }
+};
+
 const sectionTitle = (title: string) => (
   <motion.div
     className="relative text-center mb-10"
@@ -1205,6 +1222,7 @@ function App() {
           >
             <Link
               to="/blog"
+              onClick={() => trackEvent('click', 'Blog', 'View All Posts')}
               className="inline-block px-8 py-4 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white font-semibold rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
             >
               View All Posts
@@ -1339,6 +1357,7 @@ function App() {
                     href="https://www.linkedin.com/in/priyanka-gusani/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent('click', 'Social Media', 'LinkedIn')}
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-full flex items-center justify-center text-[#f5f5f5] hover:border-[#cc5500] hover:text-[#cc5500] transition-all duration-300"
                   >
@@ -1348,6 +1367,7 @@ function App() {
                     href="https://github.com/PriyankaGusani"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent('click', 'Social Media', 'GitHub')}
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-full flex items-center justify-center text-[#f5f5f5] hover:border-[#cc5500] hover:text-[#cc5500] transition-all duration-300"
                   >
@@ -1357,6 +1377,7 @@ function App() {
                     href="https://profiles.wordpress.org/priyankagusani/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent('click', 'Social Media', 'WordPress')}
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="w-12 h-12 bg-[#1a1a1a] border border-[#333] rounded-full flex items-center justify-center text-[#f5f5f5] hover:border-[#cc5500] hover:text-[#cc5500] transition-all duration-300"
                   >

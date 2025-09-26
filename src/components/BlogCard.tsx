@@ -3,6 +3,23 @@ import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaClock, FaUser, FaArrowRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
+// Google Analytics tracking function
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
+const trackEvent = (action: string, category: string, label?: string, value?: number) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value,
+    });
+  }
+};
+
 interface BlogPost {
   id: string;
   title: string;
@@ -42,7 +59,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
        whileInView={{ opacity: 1, y: 0 }}
        transition={{ duration: 0.6 }}
        viewport={{ once: true }}
-       onClick={() => navigate(`/blog/${post.slug}`)}
+       onClick={() => {
+         trackEvent('click', 'Blog Post', post.title);
+         navigate(`/blog/${post.slug}`);
+       }}
      >
        {/* Gradient Border Animation */}
        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#cc5500] via-[#ff6b35] to-[#cc5500] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
