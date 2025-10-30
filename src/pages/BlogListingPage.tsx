@@ -24,6 +24,11 @@ const BlogListingPage: React.FC = () => {
     loadBlogs();
   }, []);
 
+  // Set page title for blog listing page
+  React.useEffect(() => {
+    document.title = 'Blog | Priyanka Gusani';
+  }, []);
+
   // Sort blogs by date (latest first)
   const sortedBlogs = [...blogs].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()

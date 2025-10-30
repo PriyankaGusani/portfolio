@@ -28,6 +28,19 @@ const BlogDetailPage: React.FC = () => {
     loadBlog();
   }, [slug]);
 
+  // Set document title based on blog content
+  React.useEffect(() => {
+    if (loading) {
+      document.title = 'Loading... | Blog | Priyanka Gusani';
+      return;
+    }
+    if (!blog) {
+      document.title = 'Post Not Found | Blog | Priyanka Gusani';
+      return;
+    }
+    document.title = `${blog.title} | Blog | Priyanka Gusani`;
+  }, [loading, blog]);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
