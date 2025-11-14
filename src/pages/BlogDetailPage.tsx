@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { Calendar, Clock, User, Home, ArrowLeft } from 'lucide-react';
 import { getBlogPostBySlug } from '../services/blogService';
 
@@ -28,18 +29,17 @@ const BlogDetailPage: React.FC = () => {
     loadBlog();
   }, [slug]);
 
-  // Set document title based on blog content
-  React.useEffect(() => {
-    if (loading) {
-      document.title = 'Loading... | Blog | Priyanka Gusani';
-      return;
+  // Helper function to get absolute URL
+  const getAbsoluteUrl = (url: string): string => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
     }
-    if (!blog) {
-      document.title = 'Post Not Found | Blog | Priyanka Gusani';
-      return;
+    if (url.startsWith('/')) {
+      return `${window.location.protocol}//${window.location.host}${url}`;
     }
-    document.title = `${blog.title} | Blog | Priyanka Gusani`;
-  }, [loading, blog]);
+    return `${window.location.protocol}//${window.location.host}/${url}`;
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -50,40 +50,136 @@ const BlogDetailPage: React.FC = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-6">⏳</div>
-          <h1 className="text-3xl font-bold text-[#f5f5f5] mb-4">Loading Blog Post...</h1>
-          <p className="text-[#ccc] mb-8">Please wait while we fetch the content.</p>
-        </div>
-      </div>
-    );
-  }
+  // Get meta data for Helmet - calculate based on current state
+  const baseUrl = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : '';
+  const metaData = React.useMemo(() => {
+    if (loading) {
+      return {
+        title: 'Loading... | Blog | Priyanka Gusani',
+        description: 'Loading blog post...',
+        image: '',
+        url: '',
+        ogTitle: 'Loading... | Blog | Priyanka Gusani'
+      };
+    }
+    if (!blog) {
+      return {
+        title: 'Post Not Found | Blog | Priyanka Gusani',
+        description: 'The blog post you\'re looking for doesn\'t exist.',
+        image: '',
+        url: '',
+        ogTitle: 'Post Not Found | Blog | Priyanka Gusani'
+      };
+    }
+    return {
+      title: `${blog.title} | Blog | Priyanka Gusani`,
+      description: blog.excerpt || blog.metaDescription || '',
+      image: getAbsoluteUrl(blog.featuredImage),
+      url: `${baseUrl}/blog/${blog.slug}`,
+      ogTitle: blog.title
+    };
+  }, [blog, loading, baseUrl]);
 
-  if (!blog) {
-    return (
-      <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-6">📝</div>
-          <h1 className="text-3xl font-bold text-[#f5f5f5] mb-4">Blog Post Not Found</h1>
-          <p className="text-[#ccc] mb-8">The blog post you're looking for doesn't exist.</p>
-          <Link
-            to="/blog"
-            className="inline-block px-6 py-3 bg-[#cc5500] text-[#f5f5f5] font-semibold rounded-full hover:bg-[#ff6600] transition-colors duration-300"
-          >
-            Back to Blog
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Manually ensure meta tags are set (fallback for Helmet)
+  React.useEffect(() => {
+    if (typeof document === 'undefined') return;
+    
+    // Update title
+    if (metaData.title) {
+      document.title = metaData.title;
+    }
+    
+    // Update description
+    let descMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+    if (!descMeta) {
+      descMeta = document.createElement('meta');
+      descMeta.setAttribute('name', 'description');
+      document.head.appendChild(descMeta);
+    }
+    descMeta.setAttribute('content', metaData.description);
+    
+    // Update Open Graph tags
+    const updateOGTag = (property: string, content: string) => {
+      if (!content) return;
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateOGTag('og:title', metaData.ogTitle);
+    updateOGTag('og:description', metaData.description);
+    if (metaData.image) updateOGTag('og:image', metaData.image);
+    if (metaData.url) updateOGTag('og:url', metaData.url);
+    updateOGTag('og:type', 'article');
+    
+    // Update Twitter Card tags
+    const updateTwitterTag = (name: string, content: string) => {
+      if (!content) return;
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateTwitterTag('twitter:card', 'summary_large_image');
+    updateTwitterTag('twitter:title', metaData.ogTitle);
+    updateTwitterTag('twitter:description', metaData.description);
+    if (metaData.image) updateTwitterTag('twitter:image', metaData.image);
+  }, [metaData]);
 
   return (
     <div className="min-h-screen bg-[#0f0f0f]">
-      {/* Navigation Header */}
-      <motion.header
+      <Helmet>
+        <title>{metaData.title}</title>
+        <meta name="description" content={metaData.description} />
+        
+        {/* Open Graph tags */}
+        <meta property="og:title" content={metaData.ogTitle} />
+        <meta property="og:description" content={metaData.description} />
+        {metaData.image && <meta property="og:image" content={metaData.image} />}
+        {metaData.url && <meta property="og:url" content={metaData.url} />}
+        <meta property="og:type" content="article" />
+        
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaData.ogTitle} />
+        <meta name="twitter:description" content={metaData.description} />
+        {metaData.image && <meta name="twitter:image" content={metaData.image} />}
+      </Helmet>
+
+      {loading ? (
+        <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-6">⏳</div>
+            <h1 className="text-3xl font-bold text-[#f5f5f5] mb-4">Loading Blog Post...</h1>
+            <p className="text-[#ccc] mb-8">Please wait while we fetch the content.</p>
+          </div>
+        </div>
+      ) : !blog ? (
+        <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-6">📝</div>
+            <h1 className="text-3xl font-bold text-[#f5f5f5] mb-4">Blog Post Not Found</h1>
+            <p className="text-[#ccc] mb-8">The blog post you're looking for doesn't exist.</p>
+            <Link
+              to="/blog"
+              className="inline-block px-6 py-3 bg-[#cc5500] text-[#f5f5f5] font-semibold rounded-full hover:bg-[#ff6600] transition-colors duration-300"
+            >
+              Back to Blog
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Navigation Header */}
+          <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-[#1a1a1a] border-b border-[#333] py-4 sticky top-0 z-50"
@@ -245,6 +341,8 @@ const BlogDetailPage: React.FC = () => {
           </motion.div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };

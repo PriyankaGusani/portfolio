@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { Calendar, Clock, ArrowRight, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -24,10 +25,71 @@ const BlogListingPage: React.FC = () => {
     loadBlogs();
   }, []);
 
-  // Set page title for blog listing page
+  // Manually ensure meta tags are set for blog listing page
   React.useEffect(() => {
-    document.title = 'Blog | Priyanka Gusani';
+    if (typeof document === 'undefined') return;
+    
+    const baseUrl = `${window.location.protocol}//${window.location.host}`;
+    const pageUrl = `${baseUrl}/blog`;
+    const title = 'Blog | Priyanka Gusani';
+    const description = 'Explore my latest thoughts on web development, WordPress, automation, and the digital world';
+    
+    // Update title
+    document.title = title;
+    
+    // Update description
+    let descMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+    if (!descMeta) {
+      descMeta = document.createElement('meta');
+      descMeta.setAttribute('name', 'description');
+      document.head.appendChild(descMeta);
+    }
+    descMeta.setAttribute('content', description);
+    
+    // Update Open Graph tags
+    const updateOGTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateOGTag('og:title', title);
+    updateOGTag('og:description', description);
+    updateOGTag('og:url', pageUrl);
+    updateOGTag('og:type', 'website');
+    
+    // Remove og:image if it exists (from detail page)
+    const ogImage = document.querySelector('meta[property="og:image"]') as HTMLMetaElement;
+    if (ogImage) {
+      ogImage.remove();
+    }
+    
+    // Update Twitter Card tags
+    const updateTwitterTag = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateTwitterTag('twitter:card', 'summary');
+    updateTwitterTag('twitter:title', title);
+    updateTwitterTag('twitter:description', description);
+    
+    // Remove twitter:image if it exists (from detail page)
+    const twitterImage = document.querySelector('meta[name="twitter:image"]') as HTMLMetaElement;
+    if (twitterImage) {
+      twitterImage.remove();
+    }
   }, []);
+
 
   // Sort blogs by date (latest first)
   const sortedBlogs = [...blogs].sort((a, b) => 
@@ -43,8 +105,28 @@ const BlogListingPage: React.FC = () => {
     });
   };
 
+  const baseUrl = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : '';
+  const pageUrl = `${baseUrl}/blog`;
+  const description = 'Explore my latest thoughts on web development, WordPress, automation, and the digital world';
+
   return (
     <div className="min-h-screen bg-[#0f0f0f]">
+      <Helmet>
+        <title>Blog | Priyanka Gusani</title>
+        <meta name="description" content={description} />
+        
+        {/* Open Graph tags */}
+        <meta property="og:title" content="Blog | Priyanka Gusani" />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Blog | Priyanka Gusani" />
+        <meta name="twitter:description" content={description} />
+      </Helmet>
+      
       {/* Navigation Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
