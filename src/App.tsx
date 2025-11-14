@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 // Declare Calendly global object
 declare global {
@@ -235,6 +236,67 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Set meta tags for home page
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    
+    const baseUrl = `${window.location.protocol}//${window.location.host}`;
+    const title = 'Priyanka - Sr. WordPress Developer';
+    const description = 'Senior WordPress Developer specializing in custom theme development, Shopify Liquid, PHP, and automation solutions. Explore my portfolio and latest blog posts.';
+    const imageUrl = `${baseUrl}/profile.png`;
+    
+    // Update title
+    document.title = title;
+    
+    // Update description
+    let descMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement;
+    if (!descMeta) {
+      descMeta = document.createElement('meta');
+      descMeta.setAttribute('name', 'description');
+      document.head.appendChild(descMeta);
+    }
+    descMeta.setAttribute('content', description);
+    
+    // Update Open Graph tags
+    const updateOGTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateOGTag('og:title', title);
+    updateOGTag('og:description', description);
+    updateOGTag('og:type', 'website');
+    updateOGTag('og:image', imageUrl);
+    updateOGTag('og:url', baseUrl);
+    
+    // Remove og:url if it was set to a blog post URL
+    const ogUrl = document.querySelector('meta[property="og:url"]') as HTMLMetaElement;
+    if (ogUrl && !ogUrl.getAttribute('content')?.endsWith('/blog')) {
+      ogUrl.setAttribute('content', baseUrl);
+    }
+    
+    // Update Twitter Card tags
+    const updateTwitterTag = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateTwitterTag('twitter:card', 'summary_large_image');
+    updateTwitterTag('twitter:title', title);
+    updateTwitterTag('twitter:description', description);
+    updateTwitterTag('twitter:image', imageUrl);
+  }, []);
+
   // Load latest blog posts
   useEffect(() => {
     const loadLatestBlogs = async () => {
@@ -350,8 +412,31 @@ function App() {
     }
   };
 
+  const baseUrl = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : '';
+  const title = 'Priyanka - Sr. WordPress Developer';
+  const description = 'Senior WordPress Developer specializing in custom theme development, Shopify Liquid, PHP, and automation solutions. Explore my portfolio and latest blog posts.';
+  const imageUrl = `${baseUrl}/profile.png`;
+
   return (
     <div className="bg-[#0f0f0f] text-[#f5f5f5] min-h-screen font-sans">
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        
+        {/* Open Graph tags */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={baseUrl} />
+        
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={imageUrl} />
+      </Helmet>
+      
       {/* Hero Section */}
       <section id="hero" className="h-screen flex flex-col justify-center items-center text-center pb-4 md:pb-2 relative overflow-hidden">
         {/* Floating Icons - Left Side */}
