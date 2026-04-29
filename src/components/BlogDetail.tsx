@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaTag, FaShare } from 'react-icons/fa';
-import { IoMdClose } from 'react-icons/io';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface BlogPost {
   id: string;
@@ -20,10 +23,9 @@ interface BlogPost {
 
 interface BlogDetailProps {
   post: BlogPost;
-  onClose: () => void;
 }
 
-const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
+const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -39,7 +41,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
         return (
           <motion.h2
             key={index}
-            className="text-2xl font-bold text-[#0f0f0f] mt-8 mb-4 text-[#cc5500]"
+            className="text-2xl font-bold mt-8 mb-4 text-[#cc5500]"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -53,7 +55,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
         return (
           <motion.li
             key={index}
-            className="text-gray-700 mb-2 ml-6 list-disc"
+            className="text-gray-300 mb-2 ml-6 list-disc"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -67,7 +69,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
         return (
           <motion.li
             key={index}
-            className="text-gray-700 mb-2 ml-6 list-decimal"
+            className="text-gray-300 mb-2 ml-6 list-decimal"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -85,7 +87,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
         return (
           <motion.p
             key={index}
-            className="text-gray-700 mb-4 leading-relaxed"
+            className="text-gray-300 mb-4 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -93,7 +95,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
           >
             {parts.map((part, partIndex) => 
               partIndex % 2 === 1 ? (
-                <strong key={partIndex} className="font-semibold text-[#0f0f0f]">
+                <strong key={partIndex} className="font-semibold text-[#f5f5f5]">
                   {part}
                 </strong>
               ) : (
@@ -106,7 +108,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
       return (
         <motion.p
           key={index}
-          className="text-gray-700 mb-4 leading-relaxed"
+          className="text-gray-300 mb-4 leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -119,48 +121,56 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <div className="min-h-screen bg-[#0f0f0f] py-12 px-4 md:px-24">
       <motion.div
-        className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        className="max-w-4xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
-        >
-          <IoMdClose className="text-2xl text-gray-600" />
-        </button>
+        {/* Back Link */}
+        <Link href="/" className="inline-flex items-center space-x-2 text-[#cc5500] hover:text-[#ff6b35] transition-colors duration-300 mb-8 font-semibold">
+          <FaArrowLeft />
+          <span>Back to Portfolio</span>
+        </Link>
 
-        {/* Header Image */}
-        <div className="relative h-64 bg-gradient-to-br from-[#cc5500] to-[#ff6b35] rounded-t-2xl flex items-center justify-center">
-          <div className="text-white text-center">
-            <span className="text-6xl mb-4 block">📝</span>
-            <h1 className="text-3xl font-bold px-8">{post.title}</h1>
+        {/* Header Image/Gradient */}
+        <div className="relative h-64 md:h-96 bg-gradient-to-br from-[#cc5500] to-[#ff6b35] rounded-2xl flex items-center justify-center mb-12 shadow-2xl overflow-hidden">
+          {post.featuredImage ? (
+            <>
+              <Image 
+                src={post.featuredImage} 
+                alt={post.title} 
+                fill 
+                className="object-cover" 
+                priority 
+              />
+              <div className="absolute inset-0 bg-black/50"></div>
+            </>
+          ) : (
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+            </div>
+          )}
+          <div className="text-white text-center relative z-10 w-full px-8">
+            {!post.featuredImage && <span className="text-6xl mb-4 block">📝</span>}
+            <h1 className="text-3xl md:text-5xl font-bold">{post.title}</h1>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8">
+        {/* Content Container */}
+        <div className="bg-[#1a1a1a] rounded-3xl p-8 md:p-12 shadow-xl">
           {/* Meta Information */}
           <motion.div
-            className="flex flex-wrap items-center justify-between mb-8 p-4 bg-gray-50 rounded-xl"
+            className="flex flex-wrap items-center justify-between mb-8 p-6 bg-[#242424] rounded-2xl border border-gray-800"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="flex flex-wrap items-center space-x-6 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
               <div className="flex items-center space-x-2">
                 <FaUser className="text-[#cc5500]" />
-                <span className="font-medium">{post.author}</span>
+                <span className="font-medium text-gray-200">{post.author}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <FaCalendarAlt className="text-[#cc5500]" />
@@ -178,13 +188,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
 
           {/* Category and Tags */}
           <motion.div
-            className="mb-8"
+            className="mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="mb-4">
-              <span className="inline-block px-4 py-2 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white font-semibold rounded-full">
+            <div className="mb-6">
+              <span className="inline-block px-4 py-2 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white font-semibold rounded-full shadow-lg shadow-[#cc5500]/20">
                 {post.category}
               </span>
             </div>
@@ -193,7 +203,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
               {post.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-[#cc5500] hover:text-white transition-colors duration-300 cursor-pointer"
+                  className="px-3 py-1 bg-gray-800 text-gray-300 text-sm rounded-full hover:bg-[#cc5500] hover:text-white transition-colors duration-300 cursor-pointer"
                 >
                   {tag}
                 </span>
@@ -203,32 +213,16 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post, onClose }) => {
 
           {/* Article Content */}
           <motion.div
-            className="prose prose-lg max-w-none"
+            className="prose prose-invert prose-lg max-w-none"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {formatContent(post.content)}
           </motion.div>
-
-          {/* Back Button */}
-          <motion.div
-            className="mt-12 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <button
-              onClick={onClose}
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-[#cc5500] text-white rounded-full hover:bg-[#ff6b35] transition-colors duration-300 font-semibold"
-            >
-              <FaArrowLeft />
-              <span>Back to Portfolio</span>
-            </button>
-          </motion.div>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
