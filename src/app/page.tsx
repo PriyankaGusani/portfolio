@@ -327,7 +327,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#0f0f0f] text-[#f5f5f5] min-h-screen font-sans">
+    <div className="bg-[#0f0f0f] text-[#f5f5f5] min-h-screen font-sans w-full overflow-x-hidden">
       <Script 
         src="https://assets.calendly.com/assets/external/widget.js" 
         strategy="afterInteractive" 
