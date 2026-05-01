@@ -188,7 +188,7 @@ function FloatingIcon({ icon, name, position, delay, top, gradient }: {
 }) {
   return (
     <motion.div
-      className={`absolute ${position === 'left' ? 'left-8 md:left-16' : 'right-8 md:right-16'} ${top} w-14 h-14 rounded-full p-3 shadow-lg flex items-center justify-center group cursor-pointer`}
+      className={`absolute ${position === 'left' ? 'left-2 sm:left-4 md:left-16' : 'right-2 sm:right-4 md:right-16'} ${top} w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full p-2 md:p-3 shadow-lg flex items-center justify-center group cursor-pointer opacity-40 sm:opacity-60 md:opacity-100 z-0`}
       animate={{
         y: position === 'left' ? [0, -15, 0] : [0, 15, 0],
       }}
@@ -205,7 +205,7 @@ function FloatingIcon({ icon, name, position, delay, top, gradient }: {
         boxShadow: '0 0 20px rgba(255, 102, 0, 0.3)'
       }}
     >
-      <div className="text-white text-xl">
+      <div className="text-white flex items-center justify-center w-full h-full">
         {icon}
       </div>
       {/* Tooltip */}
@@ -334,20 +334,20 @@ export default function Home() {
       />
       
       {/* Hero Section */}
-      <section id="hero" className="min-h-screen flex flex-col justify-center items-center text-center pb-4 md:pb-2 relative overflow-hidden">
+      <section id="hero" className="min-h-screen flex flex-col justify-center items-center text-center pb-12 md:pb-2 relative overflow-hidden">
         {/* Floating Icons - Left Side */}
         <FloatingIcon icon={<SiPhp size={20} className="md:w-7 md:h-7" />} name="PHP" position="left" delay={0} top="top-8 md:top-12" gradient="linear-gradient(135deg, #8993be 0%, #4F5B93 100%)" />
         <FloatingIcon icon={<FaHtml5 size={20} className="md:w-7 md:h-7" />} name="HTML5" position="left" delay={1.2} top="top-24 md:top-32" gradient="linear-gradient(135deg, #e34f26 0%, #f06529 100%)" />
         <FloatingIcon icon={<FaCss3Alt size={20} className="md:w-7 md:h-7" />} name="CSS3" position="left" delay={2.4} top="top-44 md:top-56" gradient="linear-gradient(135deg, #1572b6 0%, #33a9dc 100%)" />
         <FloatingIcon icon={<SiJquery size={20} className="md:w-7 md:h-7" />} name="jQuery" position="left" delay={3.6} top="top-64 md:top-80" gradient="linear-gradient(135deg, #0769ad 0%, #7acef4 100%)" />
-        <FloatingIcon icon={<SiMysql size={20} className="md:w-7 md:h-7" />} name="MySQL" position="left" delay={4.8} top="bottom-16 md:bottom-12" gradient="linear-gradient(135deg, #00758f 0%, #f29111 100%)" />
+        <FloatingIcon icon={<SiMysql size={20} className="md:w-7 md:h-7" />} name="MySQL" position="left" delay={4.8} top="bottom-4 md:bottom-12" gradient="linear-gradient(135deg, #00758f 0%, #f29111 100%)" />
         
         {/* Floating Icons - Right Side */}
         <FloatingIcon icon={<FaWordpressSimple size={20} className="md:w-7 md:h-7" />} name="WordPress" position="right" delay={0.6} top="top-6 md:top-8" gradient="linear-gradient(135deg, #21759b 0%, #00749C 100%)" />
         <FloatingIcon icon={<FaShopify size={20} className="md:w-7 md:h-7" />} name="Shopify" position="right" delay={1.8} top="top-24 md:top-32" gradient="linear-gradient(135deg, #96bf48 0%, #5e8e3e 100%)" />
         <FloatingIcon icon={<SiN8N size={20} className="md:w-7 md:h-7" />} name="n8n" position="right" delay={3.0} top="top-44 md:top-56" gradient="linear-gradient(135deg, #F36C21 0%, #F89C4B 100%)" />
         <FloatingIcon icon={<FaJs size={20} className="md:w-7 md:h-7" />} name="JavaScript" position="right" delay={4.2} top="top-64 md:top-80" gradient="linear-gradient(135deg, #f7df1e 0%, #f0db4f 100%)" />
-        <FloatingIcon icon={<SiGraphql size={20} className="md:w-7 md:h-7" />} name="GraphQL" position="right" delay={2.4} top="bottom-16 md:bottom-11" gradient="linear-gradient(135deg, #e535ab 0%, #f6009b 100%)" />
+        <FloatingIcon icon={<SiGraphql size={20} className="md:w-7 md:h-7" />} name="GraphQL" position="right" delay={2.4} top="bottom-4 md:bottom-11" gradient="linear-gradient(135deg, #e535ab 0%, #f6009b 100%)" />
         
         {/* Mobile Layout */}
         <div className="md:hidden flex flex-col items-center justify-center gap-6 relative z-20 max-w-5xl mx-auto px-4 pt-20">
@@ -385,12 +385,12 @@ export default function Home() {
               <ContributionHistory align="center" />
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 {availabilityText && (
-                  <div className="flex items-center gap-2 text-xs text-gray-300 bg-[#1a1a1a] px-4 py-3 rounded-full border border-gray-800 shadow-lg">
-                    <span className="relative flex h-2.5 w-2.5">
+                  <div className="flex items-center gap-2 text-xs text-gray-300 bg-[#1a1a1a] px-4 py-3 rounded-full border border-gray-800 shadow-lg max-w-full overflow-hidden">
+                    <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                     </span>
-                    <span>Available for new projects — {availabilityText}</span>
+                    <span className="truncate">Available for new projects — {availabilityText}</span>
                   </div>
                 )}
                 <a href="#contact" className="inline-block px-6 py-2.5 bg-[#cc5500] text-[#f5f5f5] font-bold rounded-full shadow-lg hover:scale-105 hover:bg-[#ff6600] transition-all duration-300 text-sm">
@@ -530,12 +530,12 @@ export default function Home() {
       <section id="journey" className="py-16 px-4 md:px-24">
         {sectionTitle('My Journey')}
         <div className="relative max-w-4xl mx-auto mt-20">
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-800 -translate-x-1/2 z-0 hidden md:block" />
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gray-800 -translate-x-1/2 z-0" />
           <div className="space-y-12">
             {journey.map((item, idx) => (
-              <motion.div key={item.title} className={`flex flex-col md:flex-row items-center gap-8 ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''}`} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                <div className="md:w-1/2">
-                  <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-gray-800 hover:border-[#cc5500] transition-colors duration-500">
+              <motion.div key={item.title} className={`relative flex flex-col md:flex-row items-start md:items-center gap-8 ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''}`} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+                <div className="pl-12 md:pl-0 w-full md:w-1/2">
+                  <div className="bg-[#1a1a1a] p-6 md:p-8 rounded-2xl border border-gray-800 hover:border-[#cc5500] transition-colors duration-500 relative z-10">
                     <div className="flex items-center mb-4">
                       <span className="text-3xl mr-3">{item.icon}</span>
                       <div>
@@ -548,10 +548,10 @@ export default function Home() {
                     </ul>
                   </div>
                 </div>
-                <div className="relative flex items-center justify-center z-10">
+                <div className="absolute left-4 top-10 md:relative md:left-auto md:top-auto flex items-center justify-center z-20 -translate-x-1/2 md:translate-x-0">
                    <div className="w-4 h-4 bg-[#cc5500] rounded-full ring-4 ring-[#cc5500]/20" />
                 </div>
-                <div className="md:w-1/2" />
+                <div className="hidden md:block md:w-1/2" />
               </motion.div>
             ))}
           </div>
@@ -612,7 +612,7 @@ export default function Home() {
       </section>
 
       {/* Appointment Section */}
-      <section id="book-appointment" className="py-16 px-4 md:px-24 bg-[#111]">
+      <section id="book-appointment" className="pt-16 pb-8 px-4 md:px-24 bg-[#111]">
         {sectionTitle('Book Appointment')}
         <div className="mt-12 max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-800">
           <div 
@@ -624,41 +624,41 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 md:px-24">
+      <section id="contact" className="pt-12 pb-20 px-4 md:px-24">
         {sectionTitle('Contact')}
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 mt-12">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 mt-12">
            <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-              <h3 className="text-3xl font-bold mb-8">Get In Touch</h3>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full px-6 py-4 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none" />
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email" required className="w-full px-6 py-4 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none" />
-                <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} placeholder="Subject" required className="w-full px-6 py-4 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none" />
-                <textarea name="message" value={formData.message} onChange={handleInputChange} placeholder="Message" rows={5} required className="w-full px-6 py-4 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none resize-none" />
-                <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-[#cc5500] text-white font-bold rounded-xl hover:bg-[#ff6b35] transition-colors disabled:opacity-50">
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Get In Touch</h3>
+              <form onSubmit={handleSubmit} className="space-y-3 md:space-y-5">
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full px-4 py-2.5 md:px-5 md:py-3 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none text-sm md:text-base" />
+                <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email" required className="w-full px-4 py-2.5 md:px-5 md:py-3 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none text-sm md:text-base" />
+                <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} placeholder="Subject" required className="w-full px-4 py-2.5 md:px-5 md:py-3 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none text-sm md:text-base" />
+                <textarea name="message" value={formData.message} onChange={handleInputChange} placeholder="Message" rows={4} required className="w-full px-4 py-2.5 md:px-5 md:py-3 bg-[#1a1a1a] border border-gray-800 rounded-xl focus:border-[#cc5500] outline-none resize-none text-sm md:text-base" />
+                <button type="submit" disabled={isSubmitting} className="w-full py-2.5 md:py-3 bg-[#cc5500] text-white font-bold rounded-xl hover:bg-[#ff6b35] transition-colors disabled:opacity-50 text-sm md:text-base">
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
-                {submitStatus === 'success' && <p className="text-green-500 text-center">Message sent successfully!</p>}
+                {submitStatus === 'success' && <p className="text-green-500 text-center text-sm md:text-base">Message sent successfully!</p>}
               </form>
            </motion.div>
            <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-              <h3 className="text-3xl font-bold mb-8">Contact Info</h3>
-              <div className="space-y-8">
-                 <div className="flex items-center space-x-6">
-                    <div className="w-14 h-14 bg-[#1a1a1a] rounded-full flex items-center justify-center text-[#cc5500] text-2xl shadow-lg shadow-[#cc5500]/10">
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Contact Info</h3>
+              <div className="space-y-6 md:space-y-8">
+                 <div className="flex items-center space-x-4 md:space-x-6">
+                    <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 bg-[#1a1a1a] rounded-full flex items-center justify-center text-[#cc5500] text-xl md:text-2xl shadow-lg shadow-[#cc5500]/10">
                        <FaEnvelope />
                     </div>
-                    <div>
-                       <p className="text-gray-400 text-sm">Email</p>
-                       <p className="text-lg font-bold">priyanka.gusani@outlook.com</p>
+                    <div className="flex-1 min-w-0">
+                       <p className="text-gray-400 text-xs md:text-sm">Email</p>
+                       <p className="text-sm sm:text-base md:text-lg font-bold break-all">priyanka.gusani@outlook.com</p>
                     </div>
                  </div>
-                 <div className="flex items-center space-x-6">
-                    <div className="w-14 h-14 bg-[#1a1a1a] rounded-full flex items-center justify-center text-[#cc5500] text-2xl shadow-lg shadow-[#cc5500]/10">
+                 <div className="flex items-center space-x-4 md:space-x-6">
+                    <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 bg-[#1a1a1a] rounded-full flex items-center justify-center text-[#cc5500] text-xl md:text-2xl shadow-lg shadow-[#cc5500]/10">
                        <FaMapMarkerAlt />
                     </div>
-                    <div>
-                       <p className="text-gray-400 text-sm">Address</p>
-                       <p className="text-lg font-bold">Ahmedabad, Gujarat, India</p>
+                    <div className="flex-1 min-w-0">
+                       <p className="text-gray-400 text-xs md:text-sm">Address</p>
+                       <p className="text-sm sm:text-base md:text-lg font-bold break-words">Ahmedabad, Gujarat, India</p>
                     </div>
                  </div>
               </div>
