@@ -281,6 +281,53 @@ export default function Home() {
     loadLatestBlogs();
   }, []);
 
+  // Handle Calendly initialization
+  useEffect(() => {
+    const initCalendly = () => {
+      if (typeof window !== 'undefined' && window.Calendly) {
+        const widget = document.querySelector('.calendly-inline-widget');
+        if (widget && widget.innerHTML.trim() === '') {
+          window.Calendly.initInlineWidget({
+            url: 'https://calendly.com/priyanka-gusani',
+            parentElement: widget as HTMLElement,
+            prefill: {},
+            utm: {},
+            pageSettings: {
+              backgroundColor: '0f0f0f',
+              hideEventTypeDetails: false,
+              hideLandingPageDetails: false,
+              primaryColor: 'cc5500',
+              textColor: 'f5f5f5'
+            }
+          });
+        }
+      }
+    };
+
+    // Initial check
+    initCalendly();
+
+    // Secondary check after dynamic content might have shifted things
+    const timer = setTimeout(initCalendly, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle hash scroll after blogs are loaded to prevent layout shift issues
+  useEffect(() => {
+    if (!blogsLoading && typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash;
+      // Small timeout to ensure the DOM has fully updated with the new content
+      const timer = setTimeout(() => {
+        const id = hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [blogsLoading]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -586,11 +633,11 @@ export default function Home() {
       )}
 
       {/* Blog Section */}
-      <section id="blog" className="py-16 px-4 md:px-24">
+      <section id="blog" className="py-16 px-4 md:px-24 scroll-mt-20">
         {sectionTitle('Latest Blog Posts')}
-        <div className="mt-12">
+        <div className="mt-12 min-h-[400px]">
           {blogsLoading ? (
-            <div className="text-center py-12">
+            <div className="text-center py-24">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cc5500] mx-auto mb-4"></div>
               <p className="text-gray-400">Loading blog posts...</p>
             </div>
@@ -612,9 +659,9 @@ export default function Home() {
       </section>
 
       {/* Appointment Section */}
-      <section id="book-appointment" className="pt-16 pb-8 px-4 md:px-24 bg-[#111]">
+      <section id="book-appointment" className="pt-16 pb-8 px-4 md:px-24 bg-[#111] scroll-mt-20">
         {sectionTitle('Book Appointment')}
-        <div className="mt-12 max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-800">
+        <div className="mt-12 max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-800 min-h-[700px]">
           <div 
             className="calendly-inline-widget" 
             data-url="https://calendly.com/priyanka-gusani"
@@ -624,7 +671,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="pt-12 pb-20 px-4 md:px-24">
+      <section id="contact" className="pt-12 pb-20 px-4 md:px-24 scroll-mt-20">
         {sectionTitle('Contact')}
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 mt-12">
            <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>

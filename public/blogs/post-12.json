@@ -1,0 +1,21 @@
+{
+  "id": "12",
+  "title": "Contributing to WordPress Core AI: Necessary Pre-Requirements and Workflow for New Developers",
+  "excerpt": "Fresh from WordCamp Asia 2026 in Mumbai, here is my personal 6-step checklist to help you start contributing to the WordPress Core AI project.",
+  "content": "WordCamp Asia 2026 in Mumbai just wrapped up, and honestly, my head is still spinning. Between the Vada Pav breaks and the intense sessions at the Jio World Convention Centre, one thing became crystal clear: AI is becoming part of the WordPress Core. I spent my time scribbling notes and testing setups so I could share this with you. If you want to move from just 'using' WordPress to actually helping build its AI future, follow these 6 steps I've laid out.\n\n## 1. Pre-request\nBefore starting, you need a clean environment. Don't use a live site! \n* **Local Setup:** Use [LocalWP](https://localwp.com/) for a fresh local installation.\n* **Profiles:** Ensure you have an active **GitHub profile** and a **[WordPress.org profile](https://profiles.wordpress.org/priyankagusani/)**.\n\n## 2. Installation\nThis is where we get the 'Bleeding Edge' version of WordPress running.\n* **i] WordPress setup:** Install a fresh instance in Local.\n* **ii] Beta Tester plugin:** Install and activate the 'WordPress Beta Tester' plugin.\n* **iii] Update WordPress 7.0 RC:** Go to Settings > Beta Testing. Set the channel to **'Bleeding edge'** and the stream to **'Beta/RC Only'** to update to the 7.0 Release Candidate.\n* **iv] [Github AI wordpress plugin](https://github.com/WordPress/ai/):** Install the official 'AI' development plugin that brings the Abilities API to your dashboard.\n\n![WordPress 7.0 Beta Tester plugin active screen](/blog-images/WordPress-Beta-Tester-plugin.png)\n![WordPress Beta version settings Bleeding Edge configuration](/blog-images/beta-version-settings.png)\n\n## 3. Connectors AI\nOnce activated, go to the AI settings. Use the **MCP Connector** to link your site to an AI provider. This is the 'handshake' that allows WordPress to process AI requests safely.\n\n![WordPress AI Connectors configuration with MCP](/blog-images/AI-connectors.png)\n\n## 4. Abilities Enable\nUnder the AI settings, you'll see 'Abilities.' These are specific AI features. Toggle them on one by one to see how they work within the block editor.\n\n![WordPress AI Abilities enabling screen](/blog-images/ai-capabilities.png)\n\n## 5. Post / Pages Testing\nNow, open a new post or page. Test each feature—like AI content generation or smart summaries—to see if they behave as expected. This is where you'll find the bugs that need reporting!\n\n## 6. How to Report Issues (Read the Guidelines)\nIf you find a bug, don't just post it immediately. **[Read the contribution guidelines](https://make.wordpress.org/core/handbook/)** on GitHub first. A good report includes steps to reproduce the bug and screenshots. \n\nCheck out my own raised issues here to see how to format yours: [Link to My GitHub Issues](https://github.com/WordPress/ai/issues/392). Let's help make WordPress 7.0 amazing together!\n\n## Final Thoughts\nContributing to Core AI is the best way to ensure WordPress stays relevant in 2026. It might feel intimidating at first, but the community is here to help. If you run into issues with your setup or have questions about the Abilities API, drop an email below or find me in the #core-ai Slack channel.",
+  "author": "Priyanka Gusani",
+  "date": "2026-05-08",
+  "readTime": "8 min read",
+  "category": "WordPress Development",
+  "tags": [
+    "WordPress 7.0",
+    "Core AI",
+    "WordCamp Asia 2026",
+    "Open Source",
+    "Technical Tutorial"
+  ],
+  "metaDescription": "A hands-on guide to starting your journey in WordPress Core AI contribution, fresh from WordCamp Asia 2026 in Mumbai.",
+  "slug": "contributing-to-wordpress-core-ai-guide",
+  "featuredImage": "/blog-images/contributing-to-wordpress-core-ai-guide.png",
+  "show_image": 0
+}

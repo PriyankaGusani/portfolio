@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaTag, FaShare } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaTag, FaShare, FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -19,6 +19,7 @@ interface BlogPost {
   featuredImage: string;
   slug: string;
   metaDescription: string;
+  show_image?: number;
 }
 
 interface BlogDetailProps {
@@ -32,6 +33,39 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    });
+  };
+
+  const renderInlineStyles = (text: string) => {
+    const parts = text.split('**');
+    return parts.map((part, partIndex) => {
+      const isBold = partIndex % 2 === 1;
+      
+      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      const elements = [];
+      let lastIndex = 0;
+      let match;
+
+      while ((match = linkRegex.exec(part)) !== null) {
+        if (match.index > lastIndex) {
+          elements.push(part.substring(lastIndex, match.index));
+        }
+        elements.push(
+          <a key={`${partIndex}-${match.index}`} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-[#cc5500] hover:text-[#ff6b35] hover:underline transition-colors duration-300">
+            {match[1]}
+          </a>
+        );
+        lastIndex = linkRegex.lastIndex;
+      }
+
+      if (lastIndex < part.length) {
+        elements.push(part.substring(lastIndex));
+      }
+
+      if (isBold) {
+        return <strong key={partIndex} className="font-semibold text-[#f5f5f5]">{elements}</strong>;
+      }
+      return <React.Fragment key={partIndex}>{elements}</React.Fragment>;
     });
   };
 
@@ -51,7 +85,30 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
           </motion.h2>
         );
       }
-      if (line.startsWith('- ')) {
+      if (line.startsWith('![')) {
+        const altMatch = line.match(/!\[([^\]]*)\]/);
+        const urlMatch = line.match(/\(([^)]+)\)/);
+        if (altMatch && urlMatch) {
+          return (
+            <motion.div
+              key={index}
+              className="my-8 w-full flex justify-center rounded-xl overflow-hidden border border-gray-800 bg-[#242424] p-4 shadow-lg"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <img 
+                src={urlMatch[1]} 
+                alt={altMatch[1] || 'Blog Image'} 
+                className="max-w-full h-auto max-h-[500px] object-contain rounded-lg"
+                loading="lazy"
+              />
+            </motion.div>
+          );
+        }
+      }
+      if (line.startsWith('- ') || line.startsWith('* ')) {
         return (
           <motion.li
             key={index}
@@ -61,11 +118,11 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             transition={{ duration: 0.6, delay: index * 0.1 }}
             viewport={{ once: true }}
           >
-            {line.replace('- ', '')}
+            {renderInlineStyles(line.replace(/^[-*]\s/, ''))}
           </motion.li>
         );
       }
-      if (line.startsWith('1. ')) {
+      if (line.match(/^\d+\.\s/)) {
         return (
           <motion.li
             key={index}
@@ -75,35 +132,12 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             transition={{ duration: 0.6, delay: index * 0.1 }}
             viewport={{ once: true }}
           >
-            {line.replace(/^\d+\.\s/, '')}
+            {renderInlineStyles(line.replace(/^\d+\.\s/, ''))}
           </motion.li>
         );
       }
       if (line.trim() === '') {
         return <br key={index} />;
-      }
-      if (line.includes('**') && line.includes('**')) {
-        const parts = line.split('**');
-        return (
-          <motion.p
-            key={index}
-            className="text-gray-300 mb-4 leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            {parts.map((part, partIndex) => 
-              partIndex % 2 === 1 ? (
-                <strong key={partIndex} className="font-semibold text-[#f5f5f5]">
-                  {part}
-                </strong>
-              ) : (
-                part
-              )
-            )}
-          </motion.p>
-        );
       }
       return (
         <motion.p
@@ -114,7 +148,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          {line}
+          {renderInlineStyles(line)}
         </motion.p>
       );
     });
@@ -136,7 +170,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
 
         {/* Header Image/Gradient */}
         <div className="relative h-64 md:h-96 bg-gradient-to-br from-[#cc5500] to-[#ff6b35] rounded-2xl flex items-center justify-center mb-12 shadow-2xl overflow-hidden">
-          {post.featuredImage ? (
+          {post.featuredImage && post.show_image !== 0 ? (
             <>
               <Image 
                 src={post.featuredImage} 
@@ -153,7 +187,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             </div>
           )}
           <div className="text-white text-center relative z-10 w-full px-8">
-            {!post.featuredImage && <span className="text-6xl mb-4 block">📝</span>}
+            {(post.show_image === 0 || !post.featuredImage) && <span className="text-6xl mb-4 block">📝</span>}
             <h1 className="text-3xl md:text-5xl font-bold">{post.title}</h1>
           </div>
         </div>
@@ -221,6 +255,44 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
             {formatContent(post.content)}
           </motion.div>
         </div>
+
+        {/* Connect With Me Section */}
+        <motion.div
+          className="mt-16 bg-gradient-to-br from-[#1a1a1a] to-[#242424] rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-800"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold mb-6 text-white">Enjoyed reading this?</h2>
+            <p className="text-gray-400 mb-10 leading-relaxed">
+              I love discussing WordPress, AI automation, and web development. If you have a project in mind or just want to chat, let&apos;s connect!
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10">
+              <a href="https://www.linkedin.com/in/priyanka-gusani/" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 px-6 py-3 bg-[#0077b5]/10 text-[#0077b5] rounded-full hover:bg-[#0077b5] hover:text-white transition-all duration-300 border border-[#0077b5]/20 font-semibold">
+                <FaLinkedin size={20} />
+                <span>LinkedIn</span>
+              </a>
+              <a href="https://github.com/PriyankaGusani" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 px-6 py-3 bg-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 border border-white/20 font-semibold">
+                <FaGithub size={20} />
+                <span>GitHub</span>
+              </a>
+              <Link href="/#contact" className="flex items-center space-x-3 px-6 py-3 bg-[#cc5500]/10 text-[#cc5500] rounded-full hover:bg-[#cc5500] hover:text-white transition-all duration-300 border border-[#cc5500]/20 font-semibold">
+                <FaEnvelope size={20} />
+                <span>Email Me</span>
+              </Link>
+            </div>
+
+            <div className="pt-8 border-t border-gray-800">
+              <p className="text-sm text-gray-500 mb-6">Want to dive deeper?</p>
+              <Link href="/#book-appointment" className="inline-block px-10 py-4 bg-gradient-to-r from-[#cc5500] to-[#ff6b35] text-white font-bold rounded-full shadow-lg hover:shadow-[#cc5500]/40 transition-all duration-300 hover:scale-105">
+                Book a Strategy Call
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
     </div>
   );

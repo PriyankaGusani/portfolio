@@ -11,6 +11,7 @@ export interface BlogPost {
   featuredImage: string;
   slug: string;
   metaDescription: string;
+  show_image?: number;
 }
 
 export const calculateReadingTime = (content: string): string => {
