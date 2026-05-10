@@ -25,7 +25,7 @@ export default async function BlogListingPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <Link 
-              href="/"
+              href="/#blog"
               className="flex items-center gap-2 text-[#cc5500] hover:text-[#ff6600] transition-colors duration-300"
             >
               <Home className="w-5 h-5" />

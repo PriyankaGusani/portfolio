@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaTag, FaShare, FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaTag, FaShare, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -163,13 +163,16 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
         transition={{ duration: 0.6 }}
       >
         {/* Back Link */}
-        <Link href="/" className="inline-flex items-center space-x-2 text-[#cc5500] hover:text-[#ff6b35] transition-colors duration-300 mb-8 font-semibold">
+        <Link 
+          href="/#blog"
+          className="inline-flex items-center space-x-2 text-[#cc5500] hover:text-[#ff6b35] transition-colors duration-300 mb-8 font-semibold"
+        >
           <FaArrowLeft />
           <span>Back to Portfolio</span>
         </Link>
 
         {/* Header Image/Gradient */}
-        <div className="relative h-64 md:h-96 bg-gradient-to-br from-[#cc5500] to-[#ff6b35] rounded-2xl flex items-center justify-center mb-12 shadow-2xl overflow-hidden">
+        <div className="relative min-h-[250px] md:min-h-[350px] h-auto bg-gradient-to-br from-[#cc5500] to-[#ff6b35] rounded-3xl flex items-center justify-center mb-12 shadow-2xl overflow-hidden py-10 md:py-16">
           {post.featuredImage && post.show_image !== 0 ? (
             <>
               <Image 
@@ -186,9 +189,9 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
               <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
             </div>
           )}
-          <div className="text-white text-center relative z-10 w-full px-8">
-            {(post.show_image === 0 || !post.featuredImage) && <span className="text-6xl mb-4 block">📝</span>}
-            <h1 className="text-3xl md:text-5xl font-bold">{post.title}</h1>
+          <div className="text-white text-center relative z-10 w-full px-6 md:px-12">
+            {(post.show_image === 0 || !post.featuredImage) && <span className="text-4xl md:text-5xl mb-6 block">📝</span>}
+            <h1 className="text-3xl md:text-4xl font-bold leading-tight">{post.title}</h1>
           </div>
         </div>
 
@@ -275,10 +278,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ post }) => {
                 <FaLinkedin size={20} />
                 <span>LinkedIn</span>
               </a>
-              <a href="https://github.com/PriyankaGusani" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 px-6 py-3 bg-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 border border-white/20 font-semibold">
-                <FaGithub size={20} />
-                <span>GitHub</span>
-              </a>
+
               <Link href="/#contact" className="flex items-center space-x-3 px-6 py-3 bg-[#cc5500]/10 text-[#cc5500] rounded-full hover:bg-[#cc5500] hover:text-white transition-all duration-300 border border-[#cc5500]/20 font-semibold">
                 <FaEnvelope size={20} />
                 <span>Email Me</span>

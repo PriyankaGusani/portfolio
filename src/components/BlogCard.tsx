@@ -68,7 +68,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
         {/* Content Container */}
         <div className="relative bg-[#1a1a1a] rounded-2xl p-4 md:p-6 m-1 flex-grow flex flex-col">
           {/* Image Container */}
-          <div className="relative overflow-hidden rounded-xl mb-4 md:mb-6 h-32 sm:h-40 md:h-48">
+          <div className="relative overflow-hidden rounded-xl mb-4 md:mb-6 aspect-video">
             <div className="absolute inset-0 bg-gradient-to-br from-[#cc5500]/20 to-[#ff6b35]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
             <Image
               src={post.featuredImage}
@@ -87,7 +87,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
           </div>
 
           {/* Title */}
-          <h3 className="text-lg md:text-xl font-bold text-[#f5f5f5] mb-2 md:mb-3 group-hover:text-[#cc5500] transition-colors duration-300 line-clamp-2">
+          <h3 className="text-lg md:text-xl font-bold text-[#f5f5f5] mb-2 md:mb-3 group-hover:text-[#cc5500] transition-colors duration-300">
             {post.title}
           </h3>
 

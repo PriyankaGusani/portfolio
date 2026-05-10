@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
 import { 
-  FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaGithub, FaWordpress, 
+  FaLinkedin, FaEnvelope, FaMapMarkerAlt, FaWordpress, 
   FaWordpressSimple, FaShopify, FaRocket, FaHtml5, FaCss3Alt, FaJs, FaCheck,
   FaArrowRight, FaUser, FaCalendarAlt, FaClock, FaShare, FaTag, FaCode, FaCamera
 } from 'react-icons/fa';
@@ -714,7 +714,6 @@ export default function Home() {
                  <div className="flex space-x-4">
                     {[
                       { icon: <FaLinkedin />, href: 'https://www.linkedin.com/in/priyanka-gusani/' },
-                      { icon: <FaGithub />, href: 'https://github.com/PriyankaGusani' },
                       { icon: <FaWordpress />, href: 'https://profiles.wordpress.org/priyankagusani/' }
                     ].map((social, i) => (
                       <a key={i} href={social.href} target="_blank" className="w-12 h-12 bg-[#1a1a1a] rounded-full flex items-center justify-center text-xl hover:bg-[#cc5500] hover:text-white transition-all">
