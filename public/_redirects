@@ -1,7 +1,2 @@
-# Redirect all non-file requests to index.html for SPA routing
-/*    /index.html   200
-
-
-
-
-
+# Obsolete SPA redirect removed. Next.js App Router handles routing natively.
+# Netlify or other static hosts should serve individual pre-rendered HTML files.
